@@ -18,7 +18,7 @@ class CameraBase(Camera):
 		self.bridge = CvBridge()
 		self.start_camera_buffering()
 	def on_life_cycle_state_changed(self, life_cycle_state):
-		print "publish the next message"
+		print "publish the next image from buffer"
 
 if __name__ == '__main__':
 	camera = cameraBase()
