@@ -21,7 +21,7 @@ public:
 	cv_bridge::CvImagePtr cv_ptr;
 	Image_Publisher_Subscriber(ros::NodeHandle nh){
 		contour_publisher = nh.advertise <system_messages::Image>("/contours",1);
-		life_cycle_state_publisher = nh.advertise <std_msgs::Bool>("/life_cycle_state_changed",1);
+		life_cycle_state_publisher = nh.advertise <std_msgs::Bool>("/life_cycle_state",1);
 		image_subscriber = nh.subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
 	}
 
@@ -46,10 +46,8 @@ public:
 		}
 		system_messages::Image::Ptr contour_msg = boost::make_shared<system_messages::Image>();
 		contour_msg->image_is_prepared = has_contour;
-		if(has_contour == true){
-			sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", contour).toImageMsg();
-			contour_msg->rgb = *image_msg;
-		}
+		sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", contour).toImageMsg();
+		contour_msg->rgb = *image_msg;
 		contour_publisher.publish(contour_msg);
 	}
 };
