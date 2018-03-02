@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="camera"    type="cameraBase.py"    name="camera"    output="screen"/>
+    <node pkg="regioning" type="regioning_node" name="regioning" output="screen"/>
+    <node pkg="char_recognition" type="charRecognitionBase.py" name="char_recognition" output="screen"/>
+    <node pkg="serial_connection" type="serialConnectionBase.py" name="serial_connection" output="screen"/>
+</launch>
