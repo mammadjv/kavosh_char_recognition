@@ -17,7 +17,10 @@ class CameraBase(Camera):
 		self.state_subscriber = rospy.Subscriber('/life_cycle_state',Bool, self.on_life_cycle_state_changed)
 		self.bridge = CvBridge()
 		self.start_camera_buffering()
+		self.image = cv2.imread('/home/mohammad/Pictures/u.png')
+		self.on_life_cycle_state_changed(True)
 	def on_life_cycle_state_changed(self, life_cycle_state):
+		self.image_publisher.publish(self.bridge.cv2_to_imgmsg(self.image, "bgr8"))
 		print "publish the next image from buffer"
 
 if __name__ == '__main__':

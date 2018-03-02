@@ -1,6 +1,6 @@
 import numpy
 import cv2
-import caffe
+#import caffe
 
 
 class CharRecognition:

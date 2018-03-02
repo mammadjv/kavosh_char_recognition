@@ -160,7 +160,7 @@ include_directories(
 # )
 
 install(PROGRAMS 
-	scripts/cameraBase.py
+	scripts/serialConnectionBase.py
 	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Mark executables and/or libraries for installation

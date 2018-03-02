@@ -16,13 +16,22 @@ using namespace cv;
 class Image_Publisher_Subscriber{
 public:
 	ros::Publisher contour_publisher;
-	ros::Subscriber image_subscriber;
+
+//	ros::Subscriber image_subscriber;
+
+	image_transport::ImageTransport *it;
+	image_transport::Subscriber image_subscriber;
+
 	ros::Publisher life_cycle_state_publisher;
 	cv_bridge::CvImagePtr cv_ptr;
+
 	Image_Publisher_Subscriber(ros::NodeHandle nh){
+		
 		contour_publisher = nh.advertise <system_messages::Image>("/contours",1);
+		it = new image_transport::ImageTransport(nh);
+		image_subscriber = it->subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
 		life_cycle_state_publisher = nh.advertise <std_msgs::Bool>("/life_cycle_state",1);
-		image_subscriber = nh.subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
+//		image_subscriber = nh.subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
 	}
 
 	void on_image_received(const sensor_msgs::ImageConstPtr& msg){
@@ -35,6 +44,8 @@ public:
 
 	bool calc_contours(Mat image, Mat &contour){
 		// algorithm
+		contour = image;
+		return true;
 	}
 
 	void publish(bool has_contour , Mat contour){
