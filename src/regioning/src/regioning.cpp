@@ -27,7 +27,7 @@ public:
 
 	Image_Publisher_Subscriber(ros::NodeHandle nh){
 		
-		contour_publisher = nh.advertise <system_messages::Image>("/contours",1);
+		contour_publisher = nh.advertise <system_messages::Image>("/contour",1);
 		it = new image_transport::ImageTransport(nh);
 		image_subscriber = it->subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
 		life_cycle_state_publisher = nh.advertise <std_msgs::Bool>("/life_cycle_state",1);

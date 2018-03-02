@@ -13,11 +13,11 @@ class CameraBase(Camera):
 	def __init__(self):
 		rospy.init_node('camera_node', anonymous=True)
 		Camera.__init__(self)
-		self.image_publisher = rospy.Publisher('/image', Image , queue_size=10)
+		self.image_publisher = rospy.Publisher('/image', Image, queue_size = 10)
 		self.state_subscriber = rospy.Subscriber('/life_cycle_state',Bool, self.on_life_cycle_state_changed)
 		self.bridge = CvBridge()
 		self.start_camera_buffering()
-		self.image = cv2.imread('/home/mohammad/Pictures/u.png')
+		self.image = cv2.imread('/home/mj/Pictures/mj.JPG')
 		self.on_life_cycle_state_changed(True)
 	def on_life_cycle_state_changed(self, life_cycle_state):
 		self.image_publisher.publish(self.bridge.cv2_to_imgmsg(self.image, "bgr8"))

@@ -12,7 +12,7 @@ class CharRecognitionBase(CharRecognition):
 	def __init__(self):
 		CharRecognition.__init__(self)
 		rospy.init_node('char_recognition_node', anonymous=True)
-		self.image_subscriber = rospy.Subscriber("/image", Image, self.on_image_received)
+		self.image_subscriber = rospy.Subscriber("/contour", Image, self.on_image_received)
 		self.char_type_publisher = rospy.Publisher("/char_type",String,queue_size=10)
 	def on_image_received(self, image):
 		rgb_image = CvBridge().imgmsg_to_cv2(image.rgb, "bgr8")
