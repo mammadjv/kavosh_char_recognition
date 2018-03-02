@@ -17,9 +17,11 @@ class Image_Publisher_Subscriber{
 public:
 	ros::Publisher contour_publisher;
 	ros::Subscriber image_subscriber;
+	ros::Publisher life_cycle_state_publisher;
 	cv_bridge::CvImagePtr cv_ptr;
 	Image_Publisher_Subscriber(ros::NodeHandle nh){
 		contour_publisher = nh.advertise <system_messages::Image>("/contours",1);
+		life_cycle_state_publisher = nh.advertise <std_msgs::Bool>("/life_cycle_state_changed",1);
 		image_subscriber = nh.subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
 	}
 
@@ -36,6 +38,12 @@ public:
 	}
 
 	void publish(bool has_contour , Mat contour){
+		if(has_contour == false){
+			std_msgs::Bool life_cycle_ended;
+			life_cycle_ended.data = true;
+			life_cycle_state_publisher.publish(life_cycle_ended);
+			return;
+		}
 		system_messages::Image::Ptr contour_msg = boost::make_shared<system_messages::Image>();
 		contour_msg->image_is_prepared = has_contour;
 		if(has_contour == true){
