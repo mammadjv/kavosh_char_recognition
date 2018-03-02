@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="serial_connection" type="serialConnectionBase.py" name="serial_connection" output="screen"/>
+</launch>
