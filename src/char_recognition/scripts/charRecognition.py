@@ -1,5 +1,7 @@
 import numpy
 import cv2
+import caffe
+
 
 class CharRecognition:
 	def __init__(self):

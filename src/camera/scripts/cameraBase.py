@@ -21,5 +21,5 @@ class CameraBase(Camera):
 		print "publish the next image from buffer"
 
 if __name__ == '__main__':
-	camera = cameraBase()
+	camera = CameraBase()
 	rospy.spin()
