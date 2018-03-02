@@ -35,9 +35,12 @@ public:
 	}
 
 	void on_image_received(const sensor_msgs::ImageConstPtr& msg){
+		std::cout << "yesssssssss!!!!!!!!!!!!!!!!!!" << std::endl;
 		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
 		cv::Mat image  = cv_ptr->image;
 		Mat contour;
+		cv::imshow("rgb",image);
+		cv::waitKey(NULL);
 		bool has_contour = this->calc_contours(image,contour);
 		this->publish(has_contour , contour);
 	}
