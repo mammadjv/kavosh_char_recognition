@@ -5,3 +5,4 @@ devel/
 *~
 *.usr
 *swp
+.DS_Store
