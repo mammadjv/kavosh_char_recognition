@@ -41,21 +41,32 @@ public:
 		bool image_updated = msg->image_is_prepared;
 		sensor_msgs::Image rgb = msg->rgb;
 		cv::Mat image = cv_bridge::toCvCopy(rgb, sensor_msgs::image_encodings::BGR8)->image;
+		cout << "next\n";
+
 		cv::Mat contour_image;
-		bool contour_found = calc_contours(image, contour_image);
-		this->publish(contour_found, contour_image);
+		bool contour_found = this->calc_contours(image, contour_image);
+		if(contour_found == true){
+			cv::imshow("asdasd", contour_image);
+			cv::waitKey(NULL);
+		}
+		this->publish(contour_found, contour_image);	
 	}
 
 	bool check_first_frame(Mat thresh){
+		
 		cv::resize(thresh, thresh, cv::Size(30,30));
+		
 		vector<vector<Point> > contours;
   		vector<Vec4i> hierarchy;
+		
+		findContours( thresh.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+		
 		vector<vector<Point> > contours_poly( contours.size() );
   		vector<Rect> boundRect( contours.size() );
   		vector<Point2f>center( contours.size() );
   		vector<float>radius( contours.size() );
-		findContours( thresh.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-		
+
+		//cout << contours.size() << endl;
 		for( size_t i = 0; i < contours.size(); i++){
     		approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
     		boundRect[i] = boundingRect( Mat(contours_poly[i]) );
@@ -63,9 +74,9 @@ public:
   		}
   		int best_x = 0 , best_y = 0 , best_w = 0 , best_h = 0;
   		int width = thresh.cols , height = thresh.rows;
-
+		
   		for (int i = 0 ; i < boundRect.size() ; i++){
-  			cv::Rect rect = boundRect.at(i);
+  			cv::Rect rect = boundRect[i];
   			int w = rect.width , h = rect.height , x = rect.x , y = rect.y;
   			if(w  > 4 * width /5){
             	continue;
@@ -97,19 +108,21 @@ public:
 		}
 		vector<vector<Point> > contours;
   		vector<Vec4i> hierarchy;
+		
+		findContours( gray.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+		
 		vector<vector<Point> > contours_poly( contours.size() );
   		vector<Rect> boundRect( contours.size() );
   		vector<Point2f>center( contours.size() );
   		vector<float>radius( contours.size() );
-		findContours( gray.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-		
+
 		for( size_t i = 0; i < contours.size(); i++){
     		approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
     		boundRect[i] = boundingRect( Mat(contours_poly[i]) );
     		minEnclosingCircle( contours_poly[i], center[i], radius[i] );
   		}
 
-  		int best_x = 0 , best_y = 0 , best_w = 0 , best_h = 0 ;
+  		int best_x = 0 , best_y = 0 , best_w = 0 , best_h = 0;
   		int height = gray.rows , width = gray.cols;
 
 		for (int i = 0 ; i < boundRect.size() ; i++){
@@ -126,7 +139,7 @@ public:
 			if(w*h > best_w*best_h)
 				best_x , best_y , best_w , best_h = x , y , w , h;
 		}
-
+		cout << "nnanananan\n";
 		bool contour_found = false;
 		if(best_w > 30 && best_h > 30){
 			best_w = best_w + 40, best_h = best_h + 40;
@@ -134,7 +147,8 @@ public:
 				best_w = width-1 - best_x;
 			if ( best_y + best_h > height-1 )
 				best_h = height-1 - best_y; 
-			best_x = max(best_x - 20 , 0) , best_y  = max(best_y -20 , 0);
+			best_x = std::max(best_x - 20 , 0) , best_y  = std::max(best_y -20 , 0);
+			cout << best_x << "   " << best_y << "   " << best_x << "     " << best_h << endl;
 			cv::Rect roi(best_x,best_y,best_x,best_h);
 			Mat crop_img = image(roi);
 			contour = crop_img; 
@@ -159,16 +173,6 @@ public:
 	}
 };
 
-void on_image_received(const system_messages::ImageMsgConstPtr& msg){
-                std::cout << "shit!\n";
-                bool image_updated = msg->image_is_prepared;
-//              sensor_msgs::Image rgb = msg->rgb;
-                cv::Mat image = cv_bridge::toCvCopy(msg->rgb, sensor_msgs::image_encodings::BGR8)->image;
-//              cv::Mat image  = cv_ptr->image;
-//              Mat contour;
-//              bool has_contour = this->calc_contours(image,contour);
-//              this->publish(has_contour , contour);
-}
 
 int main(int argc, char **argv){
 
