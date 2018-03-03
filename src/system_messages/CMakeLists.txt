@@ -4,7 +4,7 @@ project(system_messages)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp genmsg std_msgs geometry_msgs sensor_msgs)
+find_package(catkin REQUIRED roscpp genmsg std_msgs geometry_msgs sensor_msgs message_generation)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -42,7 +42,7 @@ find_package(catkin REQUIRED roscpp genmsg std_msgs geometry_msgs sensor_msgs)
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  Image.msg
+  ImageMsg.msg
   Contour.msg
   Contours.msg
 )
@@ -65,6 +65,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+	CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES cognition_msgs
 #  CATKIN_DEPENDS other_catkin_pkg
