@@ -23,7 +23,7 @@ public:
 	cv_bridge::CvImagePtr cv_ptr;
 	Image_Publisher_Subscriber(ros::NodeHandle nh){
 		
-//		contour_publisher = nh.advertise <system_messages::Image>("/contour",1);
+		contour_publisher = nh.advertise <system_messages::ImageMsg>("/contour",1);
 //		it = new image_transport::ImageTransport(nh);
 		image_subscriber = nh.subscribe("/image", 1, &Image_Publisher_Subscriber::on_image_received, this);
 		bool_subscriber = nh.subscribe("/bool", 1, &Image_Publisher_Subscriber::on_bool_received, this);
