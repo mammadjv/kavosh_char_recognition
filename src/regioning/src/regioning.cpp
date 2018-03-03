@@ -45,10 +45,6 @@ public:
 
 		cv::Mat contour_image;
 		bool contour_found = this->calc_contours(image, contour_image);
-		if(contour_found == true){
-			cv::imshow("asdasd", contour_image);
-			cv::waitKey(NULL);
-		}
 		this->publish(contour_found, contour_image);	
 	}
 
@@ -96,6 +92,17 @@ public:
   		}
   		return false;
 	}
+
+	// void on_image_received(const sensor_msgs::ImageConstPtr& msg){
+	// 	std::cout << "yesssssssss!!!!!!!!!!!!!!!!!!" << std::endl;
+	// 	cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+	// 	cv::Mat image  = cv_ptr->image;
+	// 	Mat contour;
+	// 	cv::imshow("rgb",image);
+	// 	cv::waitKey(NULL);
+	// 	bool has_contour = this->calc_contours(image,contour);
+	// 	this->publish(has_contour , contour);
+	// }
 
 	bool calc_contours(Mat image, Mat &contour){
 		// algorithm

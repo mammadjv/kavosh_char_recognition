@@ -19,6 +19,7 @@ class CameraBase(Camera):
 		self.start_camera_buffering()
 		self.image = cv2.imread('/home/mj/datasets/croped/0.jpg')
 #		self.on_life_cycle_state_changed(True)
+
 	def on_life_cycle_state_changed(self, life_cycle_state):
 		while not rospy.is_shutdown():
 			bool_msg = Bool()
