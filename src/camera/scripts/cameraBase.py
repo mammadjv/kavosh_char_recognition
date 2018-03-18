@@ -17,22 +17,22 @@ class CameraBase(Camera):
 		self.state_subscriber = rospy.Subscriber('/life_cycle_state',Bool, self.on_life_cycle_state_changed)
 		self.bridge = CvBridge()
 		self.start_camera_buffering()
-		self.image = cv2.imread('/home/mj/datasets/croped/0.jpg')
+		self.image = cv2.imread('/home/ubuntu/Kavosh_Char_Recognition/picture.png')
 #		self.on_life_cycle_state_changed(True)
 
 	def on_life_cycle_state_changed(self, life_cycle_state):
-		while not rospy.is_shutdown():
-			bool_msg = Bool()
-			bool_msg.data = True
-			self.bool_publiher.publish(bool_msg)
-			image_message = ImageMsg()
-			image_message.rgb = self.bridge.cv2_to_imgmsg(self.image, "bgr8")
-			image_message.image_is_prepared = True
-			self.image_publisher.publish(image_message)
+#		while not rospy.is_shutdown():
+		bool_msg = Bool()
+		bool_msg.data = True
+		self.bool_publiher.publish(bool_msg)
+		image_message = ImageMsg()
+		image_message.rgb = self.bridge.cv2_to_imgmsg(self.image, "bgr8")
+		image_message.image_is_prepared = True
+		self.image_publisher.publish(image_message)
 #			print "publish the next image from buffer"
 
 if __name__ == '__main__':
 	rospy.init_node('camera_node', anonymous=True)
 	camera = CameraBase()
-	camera.on_life_cycle_state_changed(True)
+#	camera.on_life_cycle_state_changed(True)
 	rospy.spin()
