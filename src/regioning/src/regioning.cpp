@@ -15,8 +15,8 @@ using namespace cv;
 
 class Image_Publisher_Subscriber{
 public:
-	ros::Publisher contour_publisher;
 
+	ros::Publisher contour_publisher;
 	ros::Subscriber image_subscriber;
 	ros::Subscriber bool_subscriber;
 	ros::Publisher life_cycle_state_publisher;
@@ -37,15 +37,16 @@ public:
 	}
 
 	void on_image_received(const system_messages::ImageMsgConstPtr& msg){
-		cout << "sagggg\n";
+	//	cout << "sagggg\n";
 		bool image_updated = msg->image_is_prepared;
 		sensor_msgs::Image rgb = msg->rgb;
 		cv::Mat image = cv_bridge::toCvCopy(rgb, sensor_msgs::image_encodings::BGR8)->image;
-		cout << "next\n";
-
+	//	cout << "next\n";
+//		cv::imshow("image",image);
+//		cv::waitKey(1);
 		cv::Mat contour_image;
 		bool contour_found = this->calc_contours(image, contour_image);
-		this->publish(contour_found, contour_image);	
+		this->publish(contour_found, contour_image);
 	}
 
 	bool check_first_frame(Mat thresh){
@@ -108,9 +109,12 @@ public:
 		// algorithm
 		cv::Mat gray;
 		cv::cvtColor(image, gray , CV_BGR2GRAY);
-		threshold( gray, gray, 80, 255,cv::THRESH_BINARY);
+		threshold( gray, gray, 80, 255,cv::THRESH_BINARY_INV);
+//		cv::imshow("gray",gray);
+//		cv::waitKey(1);
 		bool valid_contour = this->check_first_frame(gray);
 		if(valid_contour == false){
+	//		std::cout << "fallllse!\n";
 			return false;
 		}
 		vector<vector<Point> > contours;
@@ -124,30 +128,41 @@ public:
   		vector<float>radius( contours.size() );
 
 		for( size_t i = 0; i < contours.size(); i++){
-    		approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
-    		boundRect[i] = boundingRect( Mat(contours_poly[i]) );
-    		minEnclosingCircle( contours_poly[i], center[i], radius[i] );
+	    		approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true);
+    			boundRect[i] = boundingRect( Mat(contours_poly[i]));
+    			minEnclosingCircle( contours_poly[i], center[i], radius[i]);
   		}
 
   		int best_x = 0 , best_y = 0 , best_w = 0 , best_h = 0;
   		int height = gray.rows , width = gray.cols;
-
+//		std::cout << "size  == " << boundRect.size() << std::endl;
 		for (int i = 0 ; i < boundRect.size() ; i++){
 			Rect rect = boundRect[i];
 			int x = rect.x, y = rect.y, w = rect.width, h = rect.height;
-			if(w  > 2 * width /3)
+//			cout << x << "    " << y << "     " << w << "     " << h << endl;
+			if(w  > 2 * width /3){
+				cout << "1\n";
 				continue;
-			if(x < 10 || x > width -10 || x + w < 10 || x+w > width -10)
+			}
+			if(x < 10 || x > width -10 || x + w < 10 || x+w > width -10){
+				cout << "2\n";
 				continue;
-			if( y < 10 || y + h < 10 || y+h > height - 20)
+			}
+			if( y < 10 || y + h < 10 || y+h > height - 20){
+				cout << "3\n";
 				continue;
-			if (w*h < 20)
+			}
+			if (w*h < 20){
+				cout << "4\n";
 				continue;
-			if(w*h > best_w*best_h)
-				best_x , best_y , best_w , best_h = x , y , w , h;
+			}
+			if(w*h > best_w*best_h){
+				best_x  = x, best_y = y , best_w = w, best_h = h;
+			}
 		}
-		cout << "nnanananan\n";
+	//	cout << "nnanananan\n";
 		bool contour_found = false;
+	//	cout << best_w << "   best " << best_h << endl;
 		if(best_w > 30 && best_h > 30){
 			best_w = best_w + 40, best_h = best_h + 40;
 			if ( best_x + best_w > width-1 )
@@ -155,7 +170,7 @@ public:
 			if ( best_y + best_h > height-1 )
 				best_h = height-1 - best_y; 
 			best_x = std::max(best_x - 20 , 0) , best_y  = std::max(best_y -20 , 0);
-			cout << best_x << "   " << best_y << "   " << best_x << "     " << best_h << endl;
+//			cout << best_x << "   " << best_y << "   " << best_x << "     " << best_h << endl;
 			cv::Rect roi(best_x,best_y,best_x,best_h);
 			Mat crop_img = image(roi);
 			contour = crop_img; 
@@ -163,9 +178,10 @@ public:
 			return true;
 		}
 		return false;
-}
+	}
 
 	void publish(bool has_contour , Mat contour){
+//		std::cout << has_contour << "  = has_contour\n";
 		if(has_contour == false){
 			std_msgs::Bool life_cycle_ended;
 			life_cycle_ended.data = true;
