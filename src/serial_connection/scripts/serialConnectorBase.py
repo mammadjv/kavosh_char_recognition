@@ -12,11 +12,11 @@ class SerialConnectorBase(SerialConnector):
 		self.state_subscriber = rospy.Subscriber('/char_type',String, self.on_char_type_received)
 		self.life_cycle_publisher = rospy.Publisher('/life_cycle_state',Bool,queue_size = 10)
 	def on_char_type_received(self, char_type):
-		print "receive the char type"
+#		print "receive the char type"
 		self.write_data(char_type.data)
 		life_cycle_state = Bool()
 		life_cycle_state.data = True
-		life_cycle_publisher.publish(life_cycle_state)
+		self.life_cycle_publisher.publish(life_cycle_state)
 		
 
 if __name__ == '__main__':
