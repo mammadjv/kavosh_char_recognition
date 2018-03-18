@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import picamera
 import rospy
 from camera import Camera
 from cv_bridge import CvBridge, CvBridgeError
@@ -7,6 +8,8 @@ import cv2
 from sensor_msgs.msg import Image
 from std_msgs.msg import Bool
 from  system_messages.msg import ImageMsg
+import time
+
 
 class CameraBase(Camera):
 	def __init__(self):
@@ -33,6 +36,13 @@ class CameraBase(Camera):
 
 if __name__ == '__main__':
 	rospy.init_node('camera_node', anonymous=True)
-	camera = CameraBase()
+	with picamera.PiCamera() as camera:
+		for an in camera.capture_continuous(stream):
+			stream.truncate()
+			stream.seek(0)
+			if process(stream):
+				break
+			time.sleep(0.5)
+#	camera = CameraBase()
 #	camera.on_life_cycle_state_changed(True)
 	rospy.spin()
