@@ -2,5 +2,5 @@
     <node pkg="serial_connection" type="serialConnectorBase.py" name="serial_connection" output="screen"/>
     <node pkg="char_recognition" type="charRecognitionBase.py" name="char_recognition" output="screen"/>
     <node pkg="regioning" type="regioning_node" name="regioning" output="screen"/>
-   <node pkg="camera"    type="cameraBase.py"    name="camera"    output="screen"/>
+   <include file="$(find camera)/launch/camera.launch"> </include>
 </launch>
