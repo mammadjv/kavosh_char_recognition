@@ -6,7 +6,7 @@ from system_messages.msg import ImageMsg
 from charRecognition import CharRecognition
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
-
+import time
 
 class CharRecognitionBase(CharRecognition):
 	def __init__(self):
@@ -18,7 +18,9 @@ class CharRecognitionBase(CharRecognition):
 		rgb_image = CvBridge().imgmsg_to_cv2(image.rgb, "bgr8")
 #		cv2.imshow('rgb',rgb_image);
 #		cv2.waitKey(1)
+		first = time.time()
 		char_type = self.find_character_type(rgb_image)
+		print str(time.time() - first)
 		char_type_msg = String()
 		char_type_msg.data = char_type
 		self.char_type_publisher.publish(char_type_msg)
