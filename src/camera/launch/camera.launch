@@ -1,3 +1,4 @@
 <launch>
-	<node pkg="camera" type="cameraBase.py" name="camera" output="screen"/>
+		<include file="$(find raspicam_node)/launch/camerav2_410x308_30fps.launch"> </include>
+		<node pkg="camera" type="cameraBase.py" name="camera" output="screen"/>
 </launch>
