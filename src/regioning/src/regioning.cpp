@@ -39,6 +39,11 @@ public:
 	void on_image_received(const system_messages::ImageMsgConstPtr& msg){
 	//	cout << "sagggg\n";
 		bool image_updated = msg->image_is_prepared;
+
+		if(image_updated == false){
+			this->publish(false, cv::Mat());
+			return;
+		}
 		sensor_msgs::Image rgb = msg->rgb;
 		cv::Mat image = cv_bridge::toCvCopy(rgb, sensor_msgs::image_encodings::BGR8)->image;
 	//	cout << "next\n";
@@ -106,12 +111,13 @@ public:
 	// }
 
 	bool calc_contours(Mat image, Mat &contour){
+		
 		// algorithm
 		cv::Mat gray;
 		cv::cvtColor(image, gray , CV_BGR2GRAY);
 		threshold( gray, gray, 80, 255,cv::THRESH_BINARY_INV);
-//		cv::imshow("gray",gray);
-//		cv::waitKey(1);
+		//cv::imshow("gray",gray);
+		//cv::waitKey(1);
 		bool valid_contour = this->check_first_frame(gray);
 		if(valid_contour == false){
 	//		std::cout << "fallllse!\n";
