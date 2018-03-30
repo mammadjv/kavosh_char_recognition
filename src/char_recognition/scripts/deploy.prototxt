@@ -89,3 +89,11 @@ layer {
   bottom: "score"
   top: "prob"
 }
+#layers {
+#name: "output"
+#type: ARGMAX
+#bottom: "prob"
+#top: "output"
+#}
+
+
