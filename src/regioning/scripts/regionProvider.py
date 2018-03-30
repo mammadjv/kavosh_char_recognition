@@ -9,10 +9,11 @@ class RegionProvider:
         def __init__(self):
 		print 'Region provider module created'
 	
-	def checkFirstFrame(self,threshed_image):
-		thresh = cv2.resize(threshed_image, (30,30))
-                edged = cv2.Canny(thresh, 100, 50 ,1)
-                contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	def checkFirstFrame(self, thresh):
+#                ret,thresh = cv2.threshold(gray,80,255,cv2.THRESH_BINARY_INV)
+		thresh = cv2.resize(thresh, (30,30))
+#                edged = cv2.Canny(thresh, 100, 50 ,1)
+                _, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
                 best_x , best_y , best_w , best_h = 0 , 0 , 0 , 0
                 height, width = thresh.shape[:2]
                 for cnt in contours :
@@ -33,19 +34,13 @@ class RegionProvider:
 			return True
 		return False
 
-	def checkFrameColors(self,frame):
-		rows,cols = frame.shape[:2]
-	        for i in range(rows):
-        	    for j in range(cols):
-                	r = r + frame[i,j][0]
-	                g = g + frame[i,j][1]
-        	        b = b + frame[i,j][2]
-	        return r/(rows*cols) , g/(rows*cols) , b/(rows*cols)
+	def findContours(self, image):
+		image = cv2.resize(image, (150,120))
+                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                ret,thresh = cv2.threshold(gray,80,255,cv2.THRESH_BINARY_INV)
 
-	def findContours(self,image):
-		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                gray = cv2.GaussianBlur(gray, (3, 3), 0)
-                ret,thresh = cv2.threshold(gray,80,255,cv2.THRESH_BINARY)
+#		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                #gray = cv2.GaussianBlur(gray, (3, 3), 0)
 		valid_contour = self.checkFirstFrame(thresh)
 		if(valid_contour == True):
 			print 'valid!!!!!'
@@ -56,9 +51,18 @@ class RegionProvider:
 #		cv2.waitKey(1)
 #		return image,image,image,False,image,image
 #		print "kharrr!!"
-		edged = cv2.Canny(thresh, 100, 50 ,1)
-		contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	#edged = cv2.Canny(thresh, 100, 50 ,1)i
+#		print image.shape
+		
+		
+#		image = cv2.resize(image, (150,120))
+#		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#                ret,thresh = cv2.threshold(gray,80,255,cv2.THRESH_BINARY_INV)
+		cv2.imshow('thresh',thresh)
+		cv2.waitKey(1)
+		_, contours, hierarchy = cv2.findContours(thresh , cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		best_x , best_y , best_w , best_h = 0 , 0 , 0 , 0
+		print image.shape
 		draw_image = image.copy()
 		height, width = image.shape[:2]
 		for cnt in contours :
@@ -76,16 +80,16 @@ class RegionProvider:
 			if(w*h > best_w*best_h):
 				best_x , best_y , best_w , best_h = x , y , w , h
 			cv2.rectangle(draw_image,(x,y),(x+w,y+h),(255,255,0),2)
- 
+		edged = thresh 
 		crop_img = image
 		contour_found = False
-		if(best_w > 30 and best_h > 30):
-			best_w ,best_h = best_w + 40, best_h + 40
+		if(best_w > 20 and best_h > 20):
+			best_w ,best_h = best_w + 20, best_h + 20
 			if ( best_x + best_w > width-1 ):
 				best_w = width-1 - best_x
 			if ( best_y + best_h > height-1 ):
 				best_h = height-1 - best_y 
-			best_x  , best_y  = max(best_x - 20 , 0) , max(best_y -20 , 0)
+			best_x  , best_y  = max(best_x - 10 , 0) , max(best_y -10 , 0)
 			crop_img = image[best_y:best_y + best_h, best_x:best_x + best_w]
 			contour_found = True
 		return image ,draw_image ,crop_img , contour_found , edged, thresh

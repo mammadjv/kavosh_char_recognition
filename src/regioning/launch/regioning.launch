@@ -1,4 +1,6 @@
 <launch>
-	<node pkg="regioning" type="regioning_node" name="regioning" output="screen"/>
+<!--	<node pkg="regioning" type="regioning_node" name="regioning" output="screen"/> -->
+	<node pkg="regioning" type="regionProviderBase.py" name="regioning" output="screen"/> 
+	
 </launch>
 

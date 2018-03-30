@@ -14,6 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(OpenCV REQUIRED)
 
+catkin_python_setup()
+
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -124,7 +127,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 
-## Declare a C++ library
+# Declare a C++ library
 # add_library(regioning
 #   src/${PROJECT_NAME}/regioning.cpp
 # )
@@ -133,12 +136,23 @@ include_directories(
 ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS}
 )
 
-add_executable(regioning_node src/regioning.cpp)
+#add_executable(regioning_node src/regioning.cpp)
 
-target_link_libraries(regioning_node
- ${catkin_LIBRARIES}
- ${OpenCV_LIBRARIES}
+#target_link_libraries(regioning_node
+# ${catkin_LIBRARIES}
+# ${OpenCV_LIBRARIES}
+#)
+
+install(PROGRAMS 
+        scripts/regionProviderBase.py
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+install(FILES
+        launch/regioning.launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

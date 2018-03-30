@@ -38,6 +38,7 @@ public:
 
 	void on_image_received(const system_messages::ImageMsgConstPtr& msg){
 	//	cout << "sagggg\n";
+		float start = ros::Time::now().toSec();
 		bool image_updated = msg->image_is_prepared;
 
 		if(image_updated == false){
@@ -52,6 +53,7 @@ public:
 		cv::Mat contour_image;
 		bool contour_found = this->calc_contours(image, contour_image);
 		this->publish(contour_found, contour_image);
+		cout<< "Time = "<< ros::Time::now().toSec()-start<<endl;
 	}
 
 	bool check_first_frame(Mat thresh){
@@ -60,29 +62,32 @@ public:
 		
 		vector<vector<Point> > contours;
   		vector<Vec4i> hierarchy;
-		
+		cout << "shit the fuck\n";	
 		findContours( thresh.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-		
+		if(contours.size() == 0){
+			return false;
+		}
 		vector<vector<Point> > contours_poly( contours.size() );
   		vector<Rect> boundRect( contours.size() );
   		vector<Point2f>center( contours.size() );
   		vector<float>radius( contours.size() );
-
+		cout << "next fuck\n";
 		//cout << contours.size() << endl;
 		for( size_t i = 0; i < contours.size(); i++){
-    		approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
-    		boundRect[i] = boundingRect( Mat(contours_poly[i]) );
-    		minEnclosingCircle( contours_poly[i], center[i], radius[i] );
+    			approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
+    			boundRect[i] = boundingRect( Mat(contours_poly[i]) );
+    			minEnclosingCircle( contours_poly[i], center[i], radius[i] );
   		}
   		int best_x = 0 , best_y = 0 , best_w = 0 , best_h = 0;
   		int width = thresh.cols , height = thresh.rows;
 		
+		cout << "khar!\n";
   		for (int i = 0 ; i < boundRect.size() ; i++){
   			cv::Rect rect = boundRect[i];
   			int w = rect.width , h = rect.height , x = rect.x , y = rect.y;
   			if(w  > 4 * width /5){
-            	continue;
-            }
+            			continue;
+            		}
             if(x < width/5 || x > 4*width/5 || x + w < width/5 || x+w > 4*width/5)
             	continue;
             if( y < width/5 || y + h < width/5 || y+h > 4*height/5)
@@ -115,7 +120,10 @@ public:
 		// algorithm
 		cv::Mat gray;
 		cv::cvtColor(image, gray , CV_BGR2GRAY);
-		threshold( gray, gray, 80, 255,cv::THRESH_BINARY_INV);
+		threshold( gray, gray, 100, 255,cv::THRESH_BINARY_INV);
+		//adaptiveThreshold(gray, gray, 255,CV_ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV, 35, 2);
+		cv::imshow("thresh", gray);
+		cv::waitKey(1);
 		//cv::imshow("gray",gray);
 		//cv::waitKey(1);
 		bool valid_contour = this->check_first_frame(gray);
@@ -127,7 +135,9 @@ public:
   		vector<Vec4i> hierarchy;
 		
 		findContours( gray.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-		
+		if(contours.size() == 0){
+			return false;
+		}
 		vector<vector<Point> > contours_poly( contours.size() );
   		vector<Rect> boundRect( contours.size() );
   		vector<Point2f>center( contours.size() );
@@ -147,19 +157,19 @@ public:
 			int x = rect.x, y = rect.y, w = rect.width, h = rect.height;
 //			cout << x << "    " << y << "     " << w << "     " << h << endl;
 			if(w  > 2 * width /3){
-				cout << "1\n";
+				//cout << "1\n";
 				continue;
 			}
 			if(x < 10 || x > width -10 || x + w < 10 || x+w > width -10){
-				cout << "2\n";
+				//cout << "2\n";
 				continue;
 			}
 			if( y < 10 || y + h < 10 || y+h > height - 20){
-				cout << "3\n";
+				//cout << "3\n";
 				continue;
 			}
 			if (w*h < 20){
-				cout << "4\n";
+				//cout << "4\n";
 				continue;
 			}
 			if(w*h > best_w*best_h){
@@ -170,6 +180,7 @@ public:
 		bool contour_found = false;
 	//	cout << best_w << "   best " << best_h << endl;
 		if(best_w > 30 && best_h > 30){
+			cout << "1\n";
 			best_w = best_w + 40, best_h = best_h + 40;
 			if ( best_x + best_w > width-1 )
 				best_w = width-1 - best_x;
@@ -177,9 +188,13 @@ public:
 				best_h = height-1 - best_y; 
 			best_x = std::max(best_x - 20 , 0) , best_y  = std::max(best_y -20 , 0);
 //			cout << best_x << "   " << best_y << "   " << best_x << "     " << best_h << endl;
-			cv::Rect roi(best_x,best_y,best_x,best_h);
+			cv::Rect roi(best_x,best_y,best_w,best_h);
+			cout << "2\n";
 			Mat crop_img = image(roi);
-			contour = crop_img; 
+			cout << "3\n";
+			contour = crop_img;
+			cv::imshow("croped", contour);
+			cv::waitKey(1);
 			contour_found = true;
 			return true;
 		}
