@@ -159,10 +159,10 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-install(PROGRAMS 
-	scripts/plateDetectorBase.py
-	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(PROGRAMS 
+#	scripts/plateDetectorBase.py
+#	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 ## Mark executables and/or libraries for installation
 #install(TARGETS plate_detector plate_detector_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

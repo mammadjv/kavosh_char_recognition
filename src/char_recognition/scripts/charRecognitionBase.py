@@ -10,6 +10,7 @@ import time
 
 class CharRecognitionBase(CharRecognition):
 	def __init__(self):
+		
 		CharRecognition.__init__(self)
 		self.image_subscriber = rospy.Subscriber("/contour", ImageMsg, self.on_image_received)
 		self.char_type_publisher = rospy.Publisher("/char_type",String,queue_size=10)
@@ -21,6 +22,7 @@ class CharRecognitionBase(CharRecognition):
 		first = time.time()
 		char_type = self.find_character_type(rgb_image)
 		print str(time.time() - first)
+#		char_type = "s"
 		char_type_msg = String()
 		char_type_msg.data = char_type
 		self.char_type_publisher.publish(char_type_msg)
