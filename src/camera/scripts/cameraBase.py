@@ -37,6 +37,8 @@ class CameraBase(Camera):
 			np_arr = np.fromstring(compressed_image.data, np.uint8)
 			image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 			print time.time() - first
+#			cv2.imshow('image', image)
+#			cv2.waitKey(1)
 		if(image != None):
 			image_message.rgb = self.bridge.cv2_to_imgmsg(image, "bgr8")
 			image_message.image_is_prepared = True
