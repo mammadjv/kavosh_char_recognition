@@ -62,7 +62,7 @@ class RegionProvider:
 		cv2.waitKey(1)
 		_, contours, hierarchy = cv2.findContours(thresh , cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		best_x , best_y , best_w , best_h = 0 , 0 , 0 , 0
-		print image.shape
+		#print image.shape
 		draw_image = image.copy()
 		height, width = image.shape[:2]
 		for cnt in contours :
@@ -77,9 +77,14 @@ class RegionProvider:
 				continue
 			if (w*h < 20):
 				continue
+			thresh_croped = thresh[y:y+h, x:x+w]
+			blacks = len(np.where(thresh_croped == 0))
+			whites = len(np.where(thresh_croped == 255))
+			if(float(blacks)/float(w*h) > 0.8 or float(whites)/float(w*h) > 0.8):
+				continue
 			if(w*h > best_w*best_h):
 				best_x , best_y , best_w , best_h = x , y , w , h
-			cv2.rectangle(draw_image,(x,y),(x+w,y+h),(255,255,0),2)
+			#cv2.rectangle(draw_image,(x,y),(x+w,y+h),(255,255,0),2)
 		edged = thresh 
 		crop_img = image
 		contour_found = False
