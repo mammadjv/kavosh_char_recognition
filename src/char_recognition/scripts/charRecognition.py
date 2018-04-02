@@ -13,11 +13,11 @@ class CharRecognition:
 #		return 's'
 		output_number = self.pattern_perceptor.recognize(image)
 		if(output_number == 0):
-			return 'h'
+			return 'H'
 		
 		if(output_number == 1):
-			return 's'
+			return 'S'
 		else:
-			return 'u'
+			return 'U'
 
 #char = CharRecognition()

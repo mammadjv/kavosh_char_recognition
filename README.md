@@ -1,1 +1,0 @@
-# kavosh_char_recognition
