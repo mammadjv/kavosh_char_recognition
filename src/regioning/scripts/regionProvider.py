@@ -58,8 +58,8 @@ class RegionProvider:
 #		image = cv2.resize(image, (150,120))
 #		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 #                ret,thresh = cv2.threshold(gray,80,255,cv2.THRESH_BINARY_INV)
-		cv2.imshow('thresh',thresh)
-		cv2.waitKey(1)
+#		cv2.imshow('thresh',thresh)
+#		cv2.waitKey(1)
 		_, contours, hierarchy = cv2.findContours(thresh , cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		best_x , best_y , best_w , best_h = 0 , 0 , 0 , 0
 		#print image.shape
