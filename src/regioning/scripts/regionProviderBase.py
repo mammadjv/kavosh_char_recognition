@@ -4,6 +4,7 @@ from regionProvider import RegionProvider
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Bool
+from sensor_msgs.msg import Image
 from system_messages.msg import ImageMsg
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
@@ -17,6 +18,7 @@ class RegionProviderBase(RegionProvider):
 		self.gpio_publisher = rospy.Publisher("/write_gpio",Bool,queue_size=10)
 		self.life_cycle_publisher = rospy.Publisher("/life_cycle_state",Bool,queue_size=10)
 		self.contour_publisher = rospy.Publisher("/contour",ImageMsg,queue_size=10)
+		self.draw_publisher = rospy.Publisher("/draw_image",Image,queue_size=10)
 		self.bridge = CvBridge()
 
 	def on_image_received(self, image):
@@ -29,6 +31,7 @@ class RegionProviderBase(RegionProvider):
 			return
 		rgb = self.bridge.imgmsg_to_cv2(image.rgb, "bgr8")
 		image ,draw_image ,crop_img , contour_found , edged, thresh = self.findContours(rgb)
+		self.draw_publisher.publish(self.bridge.cv2_to_imgmsg(draw_image, "bgr8"))
 #		cv2.imshow('regioning rgb',rgb)
 #		cv2.waitKey(1)
 #		contour_found = False
