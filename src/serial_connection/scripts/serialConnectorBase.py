@@ -23,7 +23,8 @@ class GPIOConnector:
 		GPIO.setup(self.pinid1 , GPIO.OUT)
 		GPIO.setup(self.pinid2 , GPIO.OUT)
 		GPIO.setup(self.pinidRead , GPIO.IN, pull_up_down=GPIO.PUD_DOWN )
-		self.reset("annn")
+		self.reset("first reset")
+
 	def writeData(self, pin1value , pin2value):
 		GPIO.output(self.pinid1,pin1value)
 #		GPIO.output(self.pinid1,GPIO.HIGH)
@@ -31,24 +32,25 @@ class GPIOConnector:
 		GPIO.output(self.pinid2,pin2value)
 #		GPIO.output(self.pinid2,GPIO.HIGH)
 		time.sleep(0.002)
+
 	def readData(self):
 		return GPIO.input(self.pinidRead)
+
 	def reset(self, data):
 		print "reset             !!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		GPIO.output(self.pinid1,0)
 		time.sleep(0.002)
 		GPIO.output(self.pinid2,0)
 		time.sleep(0.002)
+
 	def on_char_type_received(self,char_type):
-		print "wriiiiiiiiiiiteee  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+		print "wriiiiiiiiiiiteee", char_type.data
 		if(char_type.data == "H"):
 		        self.writeData(0,1)
 		if(char_type.data == "S"):
 		        self.writeData(1,0)
 		if(char_type.data == "U"):
 		        self.writeData(1,1)
-#		self.writeData(0, 1)
-#		print("GPIO!!!")
 		life_cycle_state = Bool()
 		life_cycle_state.data = True
 		self.life_cycle_publisher.publish(life_cycle_state)
@@ -56,5 +58,4 @@ class GPIOConnector:
 
 if __name__ == '__main__':
 	gpioConnector = GPIOConnector(23,24,18)
-	gpioConnector.writeData(1,0)
 	rospy.spin()
